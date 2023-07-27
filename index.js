@@ -25,6 +25,7 @@ app.use(cors());
 // });
 
 app.use((req, res, next) => {
+	console.log("set headers log");
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Author, Authorization");
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
@@ -41,10 +42,11 @@ app.use((req, res, next) => {
 });
 
 mongoose
-	.connect(`${process.env.DB_URL}`)
+	// .connect(`${process.env.DB_URL}`)
+	.connect("mongodb+srv://JordanDavis47:Oblivion4799@cluster0.dgnnmdu.mongodb.net/monster-duels?retryWrites=true&w=majority")
 	.then(() => {
 		app.listen(process.env.PORT || 9000, () => {
-			console.log("listening on 9000");
+			console.log(`listening on ${process.env.port}`);
 		});
 	})
 	.catch((err) => {

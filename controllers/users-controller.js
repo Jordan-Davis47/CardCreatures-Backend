@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const HttpError = require("../models/http-error");
 
 const signup = async (req, res, next) => {
+	console.log("SIGNING UP");
 	const { email, username, password } = req.body;
 
 	let existingUser;
@@ -68,6 +69,8 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
+	console.log(res.headers, res);
+
 	const { email, password } = req.body;
 
 	let existingUser;
@@ -107,6 +110,7 @@ const login = async (req, res, next) => {
 const getLeaderboard = async (req, res, next) => {
 	const users = await User.find({});
 	const stats = [];
+	console.log(res.headers, res);
 	console.log(users);
 	for (let i = 0; i < users.length; i++) {
 		const userStats = {
