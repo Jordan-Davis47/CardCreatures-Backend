@@ -32,8 +32,8 @@ app.use((req, res, next) => {
 });
 
 mongoose
-	// .connect(`${process.env.DB_URL}`)
-	.connect("mongodb+srv://JordanDavis47:Oblivion4799@cluster0.dgnnmdu.mongodb.net/monster-duels?retryWrites=true&w=majority")
+	.connect(`${process.env.DB_URL}`)
+	// .connect("mongodb+srv://JordanDavis47:Oblivion4799@cluster0.dgnnmdu.mongodb.net/monster-duels?retryWrites=true&w=majority")
 	.then(() => {
 		app.listen(process.env.PORT || 9000, () => {
 			console.log(`listening on ${process.env.port}`);
