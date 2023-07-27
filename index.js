@@ -27,7 +27,7 @@ app.use(cors());
 app.use((req, res, next) => {
 	console.log("set headers log");
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Author, Authorization");
+	res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-type, Accept, Author, Authorization");
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 
 	next();
