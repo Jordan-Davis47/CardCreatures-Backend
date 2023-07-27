@@ -6,11 +6,6 @@ const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
 const cors = require("cors");
 
-const MonsterCard = require("./models/monsterCard");
-const MagicCard = require("./models/magicCard");
-const Deck = require("./models/deck");
-const User = require("./models/User");
-
 const deckRoutes = require("./routes/deck-routes");
 const userRoutes = require("./routes/user-routes");
 // const gameRoutes = require("./routes/game-routes");
@@ -21,11 +16,19 @@ app.use(jsonParser);
 app.use(urlencodedParser);
 app.use(cors());
 
+// app.use((req, res, next) => {
+// 	res.setHeader("Access-Control-Allow-Origin", "*");
+// 	res.setHeader("Access-Control-Allow-Credentials", "true");
+// 	res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE");
+// 	res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+// 	next();
+// });
+
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.setHeader("Access-Control-Allow-Credentials", "true");
-	res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE");
-	res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+	res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Author, Authorization");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+
 	next();
 });
 
@@ -40,7 +43,7 @@ app.use((req, res, next) => {
 mongoose
 	.connect(`${process.env.DB_URL}`)
 	.then(() => {
-		app.listen(9000, () => {
+		app.listen(process.env.PORT || 9000, () => {
 			console.log("listening on 9000");
 		});
 	})
