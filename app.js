@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
+const cors = require("cors");
 
 const MonsterCard = require("./models/monsterCard");
 const MagicCard = require("./models/magicCard");
@@ -18,9 +19,10 @@ const LeaderboardStat = require("./models/leaderboard");
 
 app.use(jsonParser);
 app.use(urlencodedParser);
+app.use(cors());
 
 app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", "https://cardcreatures.vercel.app/");
+	res.setHeader("Access-Control-Allow-Origin", "*");
 	res.setHeader("Access-Control-Allow-Credentials", "true");
 	res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE");
 	res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
@@ -36,7 +38,7 @@ app.use((req, res, next) => {
 });
 
 mongoose
-	.connect("mongodb+srv://JordanDavis47:Oblivion4799@cluster0.dgnnmdu.mongodb.net/monster-duels?retryWrites=true&w=majority")
+	.connect(`${process.env.DB_URL}`)
 	.then(() => {
 		app.listen(9000, () => {
 			console.log("listening on 9000");
