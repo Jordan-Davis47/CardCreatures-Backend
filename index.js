@@ -26,14 +26,8 @@ app.use((req, res, next) => {
 app.use("/api/deck", deckRoutes);
 app.use("/api/users", userRoutes);
 
-// app.use((req, res, next) => {
-// 	const error = new HttpError("Could not find this route", 404);
-// 	throw error;
-// });
-
 mongoose
 	.connect(`${process.env.DB_URL}`)
-	// .connect("mongodb+srv://JordanDavis47:Oblivion4799@cluster0.dgnnmdu.mongodb.net/monster-duels?retryWrites=true&w=majority")
 	.then(() => {
 		app.listen(process.env.PORT || 9000, () => {
 			console.log(`listening on ${process.env.port}`);

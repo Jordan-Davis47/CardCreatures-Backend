@@ -34,11 +34,18 @@ const createCard = async (req, res, next) => {
 	}
 	console.log("AMOUNT COST:", amountCost);
 
-	// if (deck.owner.deckPoints - (atk + def) < 0 && type === "monster") {
-	// 	return new HttpError("Sorry you dont have enough points for this", 500);
-	// } else if (deck.owner.deckPoints - amountCost < 0 && (type === "spell" || type === "trap")) {
-	// 	return new HttpError("Sorry you dont have enough points for this", 500);
-	// }
+	let newPoints;
+	if (deck.owner.deckPoints - (atk + def) < 0 && type === "monster") {
+		return new HttpError("Sorry you dont have enough points for this", 500);
+	} else if (type === "monster") {
+		newPoints = deck.owner.deckPoints - (atk + def);
+	}
+
+	if (deck.owner.deckPoints - amountCost < 0 && (type === "spell" || type === "trap")) {
+		return new HttpError("Sorry you dont have enough points for this", 500);
+	} else if (type === "spell" || type === "trap") {
+		newPoints = deck.owner.deckPoints - amountCost;
+	}
 
 	let card;
 	if (type === "monster") {
@@ -90,6 +97,10 @@ const createCard = async (req, res, next) => {
 		await card.save({ session: sess });
 		deck.cards.push(card);
 		await deck.save({ session: sess });
+		const owner = deck.owner;
+		owner.deckPoints = newPoints;
+		console.log("OWNER::", owner);
+		await owner.save({ session: sess });
 		await sess.commitTransaction();
 	} catch (err) {
 		console.log("error::", err);
@@ -103,14 +114,14 @@ const updateCard = async (req, res, next) => {
 	const cardId = req.params.cid;
 	console.log(req.body);
 
-	const { name, atk, def, description, type, effect, negate, img } = req.body;
+	const { name, atk, def, description, type, effect, negate, img, newDeckPoints } = req.body;
 
 	let card;
 	try {
 		if (type === "monster") {
-			card = await MonsterCard.findById(cardId);
+			card = await MonsterCard.findById(cardId).populate("deck");
 		} else {
-			card = await MagicCard.findById(cardId);
+			card = await MagicCard.findById(cardId).populate("deck");
 		}
 	} catch (err) {
 		return next(new HttpError("Could not find card for the provided ID", 404));
@@ -139,10 +150,22 @@ const updateCard = async (req, res, next) => {
 		card.img = img;
 	}
 
+	const ownerId = card.deck.owner;
+
+	const owner = await User.findById(ownerId);
+	console.log("owner:::", owner);
+
 	console.log(card);
 
 	try {
-		await card.save();
+		const sess = await mongoose.startSession();
+		sess.startTransaction();
+		await card.save({ session: sess });
+		if (newDeckPoints) {
+			owner.deckPoints = newDeckPoints;
+			await owner.save({ session: sess });
+		}
+		sess.commitTransaction();
 	} catch (err) {
 		return next(new HttpError("Something went wrong, could not update card", 500));
 	}
